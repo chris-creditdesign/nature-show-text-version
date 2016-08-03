@@ -28,7 +28,6 @@
 		content: "";
 		display: inline-block;
 		background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9Ii02MzIgMzU2IDE1IDEwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IC02MzIgMzU2IDE1IDEwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojODc4Nzg3O30NCjwvc3R5bGU+DQo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNLTYzMiwzNTZoMTVsLTcuNSwxMEwtNjMyLDM1NnoiLz4NCjwvc3ZnPg0K");
-		/* background-repeat: no-repeat; */
 		background-position: 0px 0px, center;
 		position: absolute;
 		top: 10px;
@@ -46,17 +45,30 @@
 	}
 </style>
 
-<!-- Just for polopoly preview -->
+<!-- DELEAT Just for polopoly preview -->
 <script src="https://code.jquery.com/jquery-1.6.4.min.js"></script>
+<!-- DELEAT -->
 
 <script>
 (function() {
 	var init = function($) {
-		var content = $("#constrain-content");
-		// var nav = $("#extranav");
-		var elemsToHide = $('.js-hide-visually');
-		var showButton = $('<button class="polopoly-show-hide-btn"></button>');
+		var showButton = '<button class="polopoly-show-hide-btn"></button>';
+		
+		/*	An array of jQuery objects each containing a chunk of text to be hidden */
+		var elemsToHide = [];
 
+		/*	Each chunk of text to be hidden starts with an element classed js-hide-visually
+			and ends with a div classed img.
+			Select each of these chunks and store them in the elemsToHide array.
+			*/
+		var toHideMarker = $('.js-hide-visually');
+
+		toHideMarker.each(function() {			
+			var combined = $(this).add($(this).nextUntil("div.img"));
+			elemsToHide.push(combined);
+		});
+		
+		/*	Functions to hide and show the text chunk and adjust the button's appearance */
 		function hideElems (btn, elems) {
 			$(btn).removeClass('polopoly-expanded')
 				.text("Show text version");
@@ -76,26 +88,27 @@
 					.removeClass('polopoly-visually-hidden');
 			});
 		}
+				
+		/*	For each chunk of text in the elemsToHide array:
+			- Add a button before the chunk
+			- Hide the chunk
+			- Show or hide the chunk when the button is clicked thereafter 
+			*/
+		elemsToHide.forEach(function(textSelection, index, array) {
+			var thisButton = $(showButton)
+				.insertBefore(textSelection.eq(0));
+			
+			hideElems(thisButton, textSelection);
 
-		/* Remove sidebar and expand main column */
-		// if (content && nav) {
-		// 	nav.remove();
-		// 	content.addClass('single-column');
-		// }
+			thisButton.click(function(evt) {
+					if($(this).next().attr('aria-expanded') === "false") {
+						showElems(this, textSelection);
+					} else {
+						hideElems(this, textSelection);
+					}
+				});
+		});
 
-		/* Hide the text alternative by default */
-		hideElems(showButton, elemsToHide);
-
-		/* Add a button to toggle the polopoly-visually-hidden class and aria-expanded attribute */
-		$(showButton)
-			.insertBefore(elemsToHide.eq(0))
-			.click(function(evt) {
-				if($(this).next().attr('aria-expanded') === "false") {
-					showElems(this, elemsToHide);
-				} else {
-					hideElems(this, elemsToHide);
-				};
-			});
 	};
 
 	setTimeout(function() {
