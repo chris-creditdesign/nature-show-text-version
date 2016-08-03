@@ -1,0 +1,110 @@
+<style>
+	.polopoly-visually-hidden {
+		clip: rect(1px, 1px, 1px, 1px);
+		height: 1px;
+		width : 1px;
+		position: absolute;
+	}
+
+	.polopoly-show-hide-btn {
+		display: block;
+		position: relative;
+		margin-bottom: 10px;
+		padding: 9px 9px 9px 30px;
+		color: #069;
+		background: #FFF;
+		font-weight: bold;
+		border: 1px solid #c8c7cf;
+		cursor: pointer;
+
+		font-size: 85%;
+	}
+
+	.polopoly-show-hide-btn:hover {
+		text-decoration: underline;
+	}
+
+	.polopoly-show-hide-btn:before {
+		content: "";
+		display: inline-block;
+		background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9Ii02MzIgMzU2IDE1IDEwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IC02MzIgMzU2IDE1IDEwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojODc4Nzg3O30NCjwvc3R5bGU+DQo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNLTYzMiwzNTZoMTVsLTcuNSwxMEwtNjMyLDM1NnoiLz4NCjwvc3ZnPg0K");
+		/* background-repeat: no-repeat; */
+		background-position: 0px 0px, center;
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		width: 15px;
+		height: 10px;
+		transition: transform 0.3s ease;
+		transform: rotate(0deg);
+	}
+
+	.polopoly-show-hide-btn.polopoly-expanded:before {
+		-webkit-transform: rotate(180deg);
+		-ms-transform: rotate(180deg);
+		transform: rotate(180deg);
+	}
+</style>
+
+<!-- Just for polopoly preview -->
+<script src="https://code.jquery.com/jquery-1.6.4.min.js"></script>
+
+<script>
+(function() {
+	var init = function($) {
+		var content = $("#constrain-content");
+		// var nav = $("#extranav");
+		var elemsToHide = $('.js-hide-visually');
+		var showButton = $('<button class="polopoly-show-hide-btn"></button>');
+
+		function hideElems (btn, elems) {
+			$(btn).removeClass('polopoly-expanded')
+				.text("Show text version");
+
+			elems.each(function() {
+					$(this).attr('aria-expanded', "false")
+						.addClass('polopoly-visually-hidden');
+				});
+		}
+
+		function showElems (btn, elems) {
+			$(btn).addClass('polopoly-expanded')
+				.text("Hide text version");
+
+			elems.each(function() {
+				$(this).attr('aria-expanded', "true")
+					.removeClass('polopoly-visually-hidden');
+			});
+		}
+
+		/* Remove sidebar and expand main column */
+		// if (content && nav) {
+		// 	nav.remove();
+		// 	content.addClass('single-column');
+		// }
+
+		/* Hide the text alternative by default */
+		hideElems(showButton, elemsToHide);
+
+		/* Add a button to toggle the polopoly-visually-hidden class and aria-expanded attribute */
+		$(showButton)
+			.insertBefore(elemsToHide.eq(0))
+			.click(function(evt) {
+				if($(this).next().attr('aria-expanded') === "false") {
+					showElems(this, elemsToHide);
+				} else {
+					hideElems(this, elemsToHide);
+				};
+			});
+	};
+
+	setTimeout(function() {
+		if (typeof jQuery !== 'undefined') {
+			/*	jQuery ready */
+				init(jQuery);
+		} else {
+			setTimeout(arguments.callee, 60);
+		}
+	}, 60);
+})();
+</script>
